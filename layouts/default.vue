@@ -1,13 +1,49 @@
 <template>
   <div>
+    <main-header />
+    <mobile-menu v-if="isMobileMenuOpened" class="main-mobile-menu" />
     <nuxt />
+    <overlay v-if="popupShown" @overlayClick="showPopUp" />
+    <pop-up v-if="popupShown" @closeClick="showPopUp" :theme="'dark'">
+      <question-form />
+    </pop-up>
   </div>
 </template>
 
+<script>
+import Header from '@/components/Header';
+import Overlay from '@/components/ui/Overlay';
+import PopUp from '@/components/PopUp';
+import QuestionForm from '@/components/QuestionForm';
+import MobileMenu from '@/components/MobileMenu';
+
+export default {
+  components: {
+    'main-header': Header,
+    overlay: Overlay,
+    'pop-up': PopUp,
+    'question-form': QuestionForm,
+    'mobile-menu': MobileMenu,
+  },
+  computed: {
+    popupShown() {
+      return this.$store.getters['popup/getPopupShown'];
+    },
+    isMobileMenuOpened() {
+      return this.$store.getters['mobile-menu/getMobileMenuState'];
+    },
+  },
+  methods: {
+    showPopUp() {
+      this.$store.commit('popup/togglePopUp');
+    },
+  },
+};
+</script>
+
 <style>
 html {
-  font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Jet Brains', monospace;
   font-size: 16px;
   word-spacing: 1px;
   -ms-text-size-adjust: 100%;
@@ -24,32 +60,48 @@ html {
   margin: 0;
 }
 
-.button--green {
-  display: inline-block;
-  border-radius: 4px;
-  border: 1px solid #3b8070;
-  color: #3b8070;
+body {
+  min-width: 320px;
+}
+
+a {
   text-decoration: none;
-  padding: 10px 30px;
 }
 
-.button--green:hover {
-  color: #fff;
-  background-color: #3b8070;
+a:hover {
+  text-decoration: underline;
 }
 
-.button--grey {
-  display: inline-block;
-  border-radius: 4px;
-  border: 1px solid #35495e;
-  color: #35495e;
-  text-decoration: none;
-  padding: 10px 30px;
-  margin-left: 15px;
+li {
+  line-height: 1.5;
 }
 
-.button--grey:hover {
-  color: #fff;
-  background-color: #35495e;
+.main-mobile-menu {
+  display: none;
+}
+
+@media screen and (max-width: 768px) {
+  .main-mobile-menu {
+    min-height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  html {
+    font-size: 14px;
+  }
+
+  ul {
+    padding-left: 1.5rem;
+  }
+}
+
+@media screen and (max-width: 390px) {
+  html {
+    font-size: 12px;
+  }
 }
 </style>
